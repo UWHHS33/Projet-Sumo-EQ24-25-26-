@@ -32,8 +32,8 @@ int cpt_sonor() {
 
   // Gérer l'impulsion sur ECHO
   if (waitingForPulse) {
-    // Vérifier si le timeout (1s) est dépassé
-    if (currentTime - startTime >= 1000000) {
+    // Vérifier si le timeout (10ms) est dépassé
+    if (currentTime - startTime >= 10000) {
       Serial.println("Aucune mesure (timeout)");
       waitingForPulse = false;
       return;
