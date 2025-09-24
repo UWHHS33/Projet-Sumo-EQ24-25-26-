@@ -3,10 +3,8 @@ const int trigPin = 12;  // Broche TRIG
 const int echoPin = 11; // Broche ECHO
 
 // Variables pour la machine à état
-unsigned long startTime;  // Temps de départ
-unsigned long pulseStart; // Début de l'impulsion
-bool waitingForPulse = false; // État d'attente de l'impulsion
-bool pulseStarted = false;    // État de début d'impulsion
+unsigned long startTime, pulseStart;  // Temps de départ et début de l'impulsion
+bool waitingForPulse = false, pulseStarted = false; // État d'attente de l'impulsion et état de début d'impulsion
 
 void setup() {
   pinMode(trigPin, OUTPUT); // TRIG en sortie
@@ -57,6 +55,7 @@ int cpt_sonor() {
 
       waitingForPulse = false; // Réinitialiser
       pulseStarted = false;
+      return(distance);
     }
   }
 }
