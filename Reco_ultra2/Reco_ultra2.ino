@@ -1,20 +1,23 @@
-const uint8_t ultra_pin[4] = {A0, A1, A2, A3};
+const uint8_t ultra_pin[4] = {8, 9, 10, 11};
 
 bool enemy[2] = {false, false};
 
 // Variables pour la machine à état
-unsigned long startTime[2], pulseStart[2];  // Temps de départ et début de l'impulsion
+unsigned long startTime[2], pulseStart_val[2];  // Temps de départ et début de l'impulsion
 bool waitingForPulse[2] = {false, false};
-bool pulseStarted[2] = {false, false};
+bool pulseStart_bool[2] = {false, false};
 
 uint8_t j;
 uint8_t echo, trigger;
 unsigned long currentTime = micros();
 
+//TestBench variables
+unsigned long mess_start;
+
 void setup() {
   for (int k = 0; k < 2; k++) {
-    pinMode(ultra_pin[k], OUTPUT); // TRIG en sortie
-    pinMode(ultra_pin[k ^ 2], INPUT);  // ECHO en entrée
+    pinMode(ultra_pin[k], INPUT); // ECHO en entrée
+    pinMode(ultra_pin[k ^ 2], OUTPUT);  // TRIG en sortie
   }
   Serial.begin(9600);       // Initialisation du port série
 }
@@ -30,46 +33,49 @@ bool acq_ultra() {
     digitalWrite(trigger, HIGH);
     delayMicroseconds(10);
     digitalWrite(trigger, LOW);
-
+    
     waitingForPulse[j] = true; // Commencer à attendre l'impulsion
     startTime[j] = currentTime; // Enregistrer le temps de départ
+
   } else {
+
     // Vérifier si le timeout (5ms) est dépassé
-      if (currentTime - startTime[j] >= 5000) {
-        Serial.println("Aucune mesure (timeout)");
+      if (currentTime - startTime[j] >= 10000) {
         waitingForPulse[j] = false;
-        
-        enemy[j] = false;
+
       }
 
       // Vérifier si l'impulsion commence (ECHO passe à HIGH)
-      if (!pulseStarted[j] && digitalRead(echo) == HIGH) {
-        pulseStart[j] = currentTime; // Enregistrer le début de l'impulsion
-        pulseStarted[j] = true;
+      if ((pulseStart_bool[j] ==  false) && (digitalRead(echo) == HIGH)) {
+        
+        pulseStart_val[j] = currentTime; // Enregistrer le début de l'impulsion
+        pulseStart_bool[j] = true;
+        
       }
 
       // Vérifier si l'impulsion se termine (ECHO passe à LOW)
-      if (pulseStarted[j] && digitalRead(echo) == LOW) {
-        unsigned long duration = currentTime - pulseStart[j]; // Calculer la durée
+      if (pulseStart_bool[j] && digitalRead(echo) == LOW) {
+        unsigned long duration = currentTime - pulseStart_val[j]; // Calculer la durée
         float distance = duration / 29.1 / 2; // Convertir en distance (cm)
 
         // Afficher la distance
-        Serial.print("Distance : ");
-        Serial.print(distance);
-        Serial.println(" cm");
 
         waitingForPulse[j] = false; // Réinitialiser
-        pulseStarted[j] = false;
-        enemy[j] = distance < 70;
+        pulseStart_bool[j] = false;
+        enemy[j] = distance < 30;
       }
   }
   return enemy[j];
 }
 
-void loop() {
-  acq_ultra();
-  delay(1000);
-  j = 0;
-}
 
+void loop() {
+  j = (j + 1) % 2;
+  if (millis() - mess_start  > 500) {
+    mess_start = millis();
+    Serial.println(acq_ultra());
+  } else {
+    acq_ultra();
+  }
+}
 
