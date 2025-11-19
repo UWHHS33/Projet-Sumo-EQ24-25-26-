@@ -7,6 +7,7 @@ unsigned long startTime[2], pulseStart_val[2];  // Temps de départ et début de
 bool waitingForPulse[2] = {false, false};
 bool pulseStart_bool[2] = {false, false};
 
+
 uint8_t j;
 uint8_t echo, trigger;
 unsigned long currentTime = micros();
@@ -78,4 +79,5 @@ void loop() {
     acq_ultra();
   }
 }
+
 
