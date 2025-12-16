@@ -1,8 +1,8 @@
 
-const uint8_t ctr_pin[4] = {7, 8, 0, 0};
-const uint8_t ultra_pin[4] = {2, 4, 3, 5};
-const uint8_t laser_pin[4] = {A0, A1, 0, 0};
-const uint8_t infra_pin = 0;
+const uint8_t ctr_pin[4] = {0, 4, 2, 1};
+const uint8_t ultra_pin[4] = {11, 13, 10, 12};
+const uint8_t laser_pin[4] = {A3, A2, 0, 0};
+const uint8_t infra_pin = 8;
 
 ////////////// Processing variables
 uint8_t i;
@@ -208,14 +208,14 @@ void loop() {
   ////////////// Special case start
   if (millis() - mess_start >= 1000) {
     mess_start = millis();
-    //Serial.print("in: "); 
-    //Serial.println(in);
-    //Serial.print("i = "); 
-    //Serial.println(i);
-    //Serial.print("j = ");
-    //Serial.println(j);
-    j = 0;
-    Serial.println(acq_ultra_pin());
+    Serial.print("in: "); 
+    Serial.println(in);
+    Serial.print("i = "); 
+    Serial.println(i);
+    Serial.print("j = ");
+    Serial.println(j);
+    //j = 0;
+    //Serial.println(acq_ultra_pin());
   }
   if (in) { // = if all acq functions returned false
 
@@ -266,6 +266,19 @@ void loop() {
   //}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
